@@ -3,6 +3,7 @@ import { Radio } from "antd";
 import banner from "../../../img/banner.png";
 import admin from "../../../img/admin.jpg";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"; // Import Axios
 import "./DLogin.css";
 
 const DLogin = () => {
@@ -13,13 +14,35 @@ const DLogin = () => {
     setUserType(e.target.value);
   };
 
-  const handleLoginSubmit = () => {
-    if (userType === "Hospital") {
-      navigate('/hospital');
-    } else if (userType === "Patient") {
-      navigate('/patient');
-    } else {
-      navigate('/insurance');
+  const handleLoginSubmit = async () => {
+    try {
+      // Define the user data for login
+      const userData = {
+        userType,
+        userID: document.querySelector("[name=ID]").value,
+        password: document.querySelector("[name=password]").value,
+      };
+
+      // Send a POST request to your backend's login endpoint
+      const response = await axios.post(
+        "https://long-tan-crane-gear.cyclic.app/api/auth/login",
+        userData
+      );
+
+      if (response.data.success) {
+        // Redirect the user to the appropriate page
+        if (userType === "hospital") {
+          navigate("/hospital");
+        } else if (userType === "Patient") {
+          navigate("/patient");
+        } else {
+          navigate("/insurance");
+        }
+      } else {
+        // Handle login failure (show an error message, for example)
+      }
+    } catch (error) {
+      console.error("Login error:", error);
     }
   };
 
