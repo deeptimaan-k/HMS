@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Radio, Button, Spin } from "antd"; 
+import { Radio, Button, Spin, message } from "antd"; 
 import banner from "../../../img/banner.png";
 import admin from "../../../img/admin.jpg";
 import axios from "axios"; // Import Axios
@@ -48,10 +48,12 @@ const DLogin = () => {
       } else {
         // Handle login failure (show an error message, for example)
         console.log("Login failed");
+        message.error("Incorrect login or password. Please try again.");
         // Implement error handling, like displaying an error message to the user
       }
     } catch (error) {
       console.error("Login error:", error);
+      message.error("Incorrect login or password. Please try again.");
       // Implement error handling for network or other errors
     }
     finally{
