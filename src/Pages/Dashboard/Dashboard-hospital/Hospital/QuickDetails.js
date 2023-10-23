@@ -5,14 +5,19 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useNavigate } from "react-router-dom";
 
 export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate(); 
 
   const handleClickOpen = () => {
     setOpen(true);
   };
-
+  const handleSearch = () => {
+    navigate("/quickpatientprofile");
+    handleClose();
+  };
   const handleClose = () => {
     setOpen(false);
   };
@@ -37,7 +42,7 @@ export default function FormDialog() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Search</Button>
+          <Button onClick={handleSearch}>Search</Button>
         </DialogActions>
       </Dialog>
     </div>
