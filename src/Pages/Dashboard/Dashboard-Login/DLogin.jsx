@@ -46,10 +46,8 @@ const DLogin = () => {
           navigate("/insurance");
         }
       } else {
-        // Handle login failure (show an error message, for example)
         console.log("Login failed");
         message.error("Incorrect login or password. Please try again.");
-        // Implement error handling, like displaying an error message to the user
       }
     } catch (error) {
       console.error("Login error:", error);
