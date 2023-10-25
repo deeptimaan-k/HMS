@@ -1,19 +1,19 @@
 import React from "react";
 import Nav from "../../Navigation";
+import PatientQuickFrom from "./PatientQuickFrom"; // Assuming PatientQuickFrom.jsx is in the same directory
 import "../../CommonCSS.css";
 const QuickSearchProfile = () => {
    
   return (
     <>
-    <Nav />
+    {/* <Nav /> */}
     <div className="container">
       <div className="AfterSideBar">
-        <h1 style={{ color: "rgb(184 191 234)" }}>Patient Profile</h1>
+      <PatientQuickFrom />
        </div>
     </div>
     </>
   );
 };
-
 export default QuickSearchProfile;
 
