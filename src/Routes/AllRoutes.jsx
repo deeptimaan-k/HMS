@@ -5,7 +5,6 @@ import HospitalDashboard from "../Pages/Dashboard/Dashboard-hospital/Hospital/Ho
 import PatientDashboard from "../Pages/Dashboard/Dashboard-hospital/Patient/PatientDashboard"; // Import the Hospital Dashboard component
 import InsuranceDashboard from "../Pages/Dashboard/Dashboard-hospital/Insurance/InsuranceDashboard"; // Import the Hospital Dashboard component
 import QuickPatientProfile from "../Pages/Dashboard/Dashboard-hospital/Hospital/PatientSearch/QuickSearchProfile"; // Import the Hospital Dashboard component
-import DoctorSearchprofile from "../Pages/Dashboard/Dashboard-hospital/Hospital/DoctorSearch/DoctorSearchprofile"; // Import the Hospital Dashboard component
 const AllRoutes = () => {
   return (
     <>
@@ -16,7 +15,6 @@ const AllRoutes = () => {
         <Route path="/patient" element={<PatientDashboard />} />
         <Route path="/insurance" element={<InsuranceDashboard />} />
         <Route path="/quickpatientprofile/:patientID" element={<QuickPatientProfile />} />
-        <Route path="/doctorsearchprofile/:doctorID" element={<DoctorSearchprofile />} />
       </Routes>
     </>
   );
