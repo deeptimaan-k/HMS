@@ -11,12 +11,11 @@ export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
   const [patientID, setPatientID] = React.useState("");
   const navigate = useNavigate(); 
-
   const handleClickOpen = () => {
+    navigate(`/quickpatientprofile/${patientID}`);
     setOpen(true);
   };
   const handleSearch = () => {
-    navigate(`/quickpatientprofile/${patientID}`);
     handleClose();
   };
   const handleClose = () => {

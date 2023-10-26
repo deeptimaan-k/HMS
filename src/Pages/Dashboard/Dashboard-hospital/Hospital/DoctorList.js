@@ -5,18 +5,19 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useNavigate } from "react-router-dom";
 
 export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
-
+  const [doctorID, setdoctorID] = React.useState("");
+  const navigate = useNavigate();
   const handleClickOpen = () => {
+    navigate(`/doctorsearchprofile/${doctorID}`);
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);
   };
-
   return (
     <div>
       <Button sx={{ fontSize: '20px', padding: '40px' }} onClick={handleClickOpen}>
@@ -33,6 +34,7 @@ export default function FormDialog() {
             type="number"
             fullWidth
             variant="standard"
+            onChange={(e) => setdoctorID(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
