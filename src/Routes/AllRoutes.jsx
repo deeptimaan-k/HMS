@@ -14,7 +14,7 @@ const AllRoutes = () => {
         <Route path="/hospital" element={<HospitalDashboard />} />
         <Route path="/patient" element={<PatientDashboard />} />
         <Route path="/insurance" element={<InsuranceDashboard />} />
-        <Route path="/quickpatientprofile" element={<QuickPatientProfile />} />
+        <Route path="/quickpatientprofile/:patientID" element={<QuickPatientProfile />} />
       </Routes>
     </>
   );
