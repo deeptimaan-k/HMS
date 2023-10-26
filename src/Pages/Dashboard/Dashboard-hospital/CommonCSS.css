@@ -11,7 +11,13 @@
   border-radius: 10px;
   box-shadow: 0px 0px 7px -3px rgb(101, 101, 101);
 }
-
+.nav-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100; /* Customize the background color as needed */
+}
 .IconsDiv {
   display: flex;
   gap: 30px;

@@ -13,14 +13,13 @@ import '../../CommonCSS.css';
 
 const PatientProfileForm = () => {
   const { patientID } = useParams();
-  const [patientData, setPatientData] = useState({}); // Initialize as an empty object
+  const [patientData, setPatientData] = useState({});
 
   useEffect(() => {
     axios
       .get(`https://long-tan-crane-gear.cyclic.app/api/auth/user/${patientID}`)
       .then((response) => {
         setPatientData(response.data.user);
-        console.log(response.data.user);
       })
       .catch((error) => {
         console.error('Error fetching patient data:', error);
@@ -29,7 +28,9 @@ const PatientProfileForm = () => {
 
   return (
     <>
-      <Nav />
+      <div className='nav-fixed'>
+        <Nav />
+      </div>
       <h1 style={{ color: 'rgb(184 191 234)' }}>Patient Profile: </h1>
       <Container className="w-30">
         <Paper elevation={3} style={{ padding: '20px' }}>
