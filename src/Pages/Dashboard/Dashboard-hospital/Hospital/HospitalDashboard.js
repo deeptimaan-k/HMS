@@ -57,16 +57,16 @@ const FrontPage = () => {
             <Quick />
             </div>
           </div>
-          <div className="one commondiv">
+          {/* <div className="one commondiv">
             <div>
             <Search />
             </div>
-          </div>
-          <div className="one commondiv">
+          </div> */}
+          {/* <div className="one commondiv">
             <div>
             <DoctorList />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -26,7 +26,7 @@ export default function FormDialog() {
   return (
     <div>
       <Button sx={{ fontSize: '20px', padding: '40px' }} onClick={handleClickOpen}>
-        Emergency Search 
+        Patient Search 
       </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Find Patient</DialogTitle>
