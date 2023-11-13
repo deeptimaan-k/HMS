@@ -14,6 +14,7 @@ import '../../CommonCSS.css';
 const PatientProfileForm = () => {
   const { patientID } = useParams();
   const [patientData, setPatientData] = useState({});
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
     axios
@@ -25,6 +26,23 @@ const PatientProfileForm = () => {
         console.error('Error fetching patient data:', error);
       });
   }, [patientID]);
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+  };
+
+  const handleUpload = () => {
+    // Handle the file upload logic here
+    // You can use 'file' state to get the selected file
+    console.log('File uploaded:', file);
+    // Add your logic for handling the file upload
+  };
+
+  const handleViewReports = () => {
+    // Handle logic to view reports
+    console.log('Viewing reports');
+    // Add your logic for viewing reports
+  };
 
   return (
     <>
@@ -36,14 +54,40 @@ const PatientProfileForm = () => {
         <Paper elevation={3} style={{ padding: '20px' }}>
           <form>
             <Grid container spacing={2} justifyContent="center" alignItems="center">
-              <Grid item xs={12} style={{ textAlign: 'center' }}>
-                <Stack direction="row" spacing={2}>
+            <Grid item xs={6}>
+                <Stack direction="row" spacing={2} alignItems="center">
                   <Avatar
                     alt="Remy Sharp"
                     src="https://media.istockphoto.com/id/1300972574/photo/millennial-male-team-leader-organize-virtual-workshop-with-employees-online.jpg?s=612x612&w=0&k=20&c=uP9rKidKETywVil0dbvg_vAKyv2wjXMwWJDNPHzc_Ug="
                     style={{ width: 150, height: 150 }}
                   />
                 </Stack>
+              </Grid>
+              
+              <Grid item xs={3} style={{ textAlign: 'right' }}>
+                <Button
+                  type="button"
+                  variant="contained"
+                  color="primary"
+                  onClick={handleViewReports}
+                >
+                  View Reports
+                </Button>
+              </Grid>
+              <Grid item xs={3} style={{ textAlign: 'right' }}>
+                <Button
+                  component="label"
+                  variant="contained"
+                  color="primary"
+                  style={{ marginLeft: '5px' }}
+                >
+                  Upload Report
+                  <input
+                    type="file"
+                    style={{ display: 'none' }}
+                    onChange={handleFileChange}
+                  />
+                </Button>
               </Grid>
               <Grid item xs={12}>
                 <TextField
