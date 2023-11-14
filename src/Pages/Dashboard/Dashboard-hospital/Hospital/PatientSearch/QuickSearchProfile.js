@@ -1,45 +1,88 @@
 import React, { useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Nav from '../../Navigation';
 import Avatar from '@mui/material/Avatar';
 import { useParams } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
-import axios from 'axios';
+import LinearProgress from '@mui/material/LinearProgress';
 import '../../CommonCSS.css';
+import { db } from '../../../../../firebaseConfig';
+import { getDocs, collection, query, where, updateDoc, arrayUnion } from 'firebase/firestore';
+import { ref, uploadBytes } from 'firebase/storage';
 
 const PatientProfileForm = () => {
-  const { patientID } = useParams();
+  const { card_id } = useParams();
+
   const [patientData, setPatientData] = useState({});
   const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(`https://long-tan-crane-gear.cyclic.app/api/auth/user/${patientID}`)
-      .then((response) => {
-        setPatientData(response.data.user);
-      })
-      .catch((error) => {
-        console.error('Error fetching patient data:', error);
-      });
-  }, [patientID]);
+    const fetchData = async () => {
+      try {
+        const q = query(
+          collection(db, "patient_details"),
+          where('card_no', '==', card_id)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const data = querySnapshot.docs[0].data();
+          setPatientData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, [card_id]);
+
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     setFile(selectedFile);
+    console.log(selectedFile);
   };
 
-  const handleUpload = () => {
-    // Handle the file upload logic here
-    // You can use 'file' state to get the selected file
-    console.log('File uploaded:', file);
-    // Add your logic for handling the file upload
+  const handleUpload = async () => {
+    try {
+      console.log('handleUpload function called');
+      if (file) {
+        setLoading(true);
+        console.log('Uploading image:', file.name);
+        const fileName = file.name;
+        const storageRef = ref(db, `Patients/${card_id}/` + fileName);
+        await uploadBytes(storageRef, file);
+        const imagePath = `${fileName}`;
+        console.log('Image uploaded. Updating database...');
+        const q = query(collection(db, 'patient_details'), where('card_no', '==', card_id));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          const docRef = querySnapshot.docs[0].ref;
+          await updateDoc(docRef, {
+            reports: arrayUnion(imagePath),
+          });
+          console.log('Successfully updated database with image path:', imagePath);
+        } else {
+          console.log('No matching document found');
+        }
+      } else {
+        console.log('No file selected');
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+  
 
   const handleViewReports = () => {
-    // Handle logic to view reports
     console.log('Viewing reports');
     // Add your logic for viewing reports
   };
@@ -54,7 +97,7 @@ const PatientProfileForm = () => {
         <Paper elevation={3} style={{ padding: '20px' }}>
           <form>
             <Grid container spacing={2} justifyContent="center" alignItems="center">
-            <Grid item xs={6}>
+              <Grid item xs={6}>
                 <Stack direction="row" spacing={2} alignItems="center">
                   <Avatar
                     alt="Remy Sharp"
@@ -63,7 +106,7 @@ const PatientProfileForm = () => {
                   />
                 </Stack>
               </Grid>
-              
+
               <Grid item xs={3} style={{ textAlign: 'right' }}>
                 <Button
                   type="button"
@@ -75,19 +118,25 @@ const PatientProfileForm = () => {
                 </Button>
               </Grid>
               <Grid item xs={3} style={{ textAlign: 'right' }}>
-                <Button
-                  component="label"
-                  variant="contained"
-                  color="primary"
-                  style={{ marginLeft: '5px' }}
-                >
-                  Upload Report
-                  <input
-                    type="file"
-                    style={{ display: 'none' }}
-                    onChange={handleFileChange}
-                  />
-                </Button>
+                <input
+                  accept="image/*"
+                  id="contained-button-file"
+                  multiple
+                  type="file"
+                  style={{ display: 'none' }}
+                  onChange={handleFileChange}
+                />
+                <label htmlFor="contained-button-file">
+                  <Button
+                    component="span"
+                    variant="contained"
+                    color="primary"
+                    style={{ marginLeft: '5px' }}
+                    onClick={handleUpload}
+                  >
+                    Upload Report
+                  </Button>
+                </label>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -99,7 +148,7 @@ const PatientProfileForm = () => {
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={patientData.patientName}
+                  value={patientData.patientName || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -112,7 +161,7 @@ const PatientProfileForm = () => {
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={patientData.DOB}
+                  value={patientData.DOB || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -125,7 +174,7 @@ const PatientProfileForm = () => {
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={patientData.age}
+                  value={patientData.age || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -138,7 +187,7 @@ const PatientProfileForm = () => {
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={patientData.mobile}
+                  value={patientData.mobile || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -151,7 +200,7 @@ const PatientProfileForm = () => {
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={patientData.email}
+                  value={patientData.email || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -164,7 +213,7 @@ const PatientProfileForm = () => {
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={patientData.department}
+                  value={patientData.department || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -177,7 +226,7 @@ const PatientProfileForm = () => {
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={patientData.gender}
+                  value={patientData.gender || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -190,7 +239,7 @@ const PatientProfileForm = () => {
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={patientData.bloodGroup}
+                  value={patientData.bloodGroup || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -203,7 +252,7 @@ const PatientProfileForm = () => {
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={patientData.address}
+                  value={patientData.address || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -216,7 +265,7 @@ const PatientProfileForm = () => {
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={patientData.disease}
+                  value={patientData.disease || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -229,7 +278,7 @@ const PatientProfileForm = () => {
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={patientData.details}
+                  value={patientData.details || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -242,13 +291,14 @@ const PatientProfileForm = () => {
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={patientData.date}
+                  value={patientData.date || ""}
                 />
               </Grid>
               <Grid item xs={12} style={{ textAlign: 'center' }}>
                 <Button type="button" variant="contained" color="primary">
                   Cancel
                 </Button>
+                {loading && <LinearProgress />} {/* Show loading progress if loading is true */}
               </Grid>
             </Grid>
           </form>

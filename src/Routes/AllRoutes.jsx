@@ -14,10 +14,9 @@ const AllRoutes = () => {
         <Route path="/hospital" element={<HospitalDashboard />} />
         <Route path="/patient" element={<PatientDashboard />} />
         <Route path="/insurance" element={<InsuranceDashboard />} />
-        <Route path="/quickpatientprofile/:patientID" element={<QuickPatientProfile />} />
+        <Route path="/quickpatientprofile/:card_id" element={<QuickPatientProfile />} />
       </Routes>
     </>
   );
 };
-
 export default AllRoutes;

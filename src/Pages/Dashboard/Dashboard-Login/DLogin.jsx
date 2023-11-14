@@ -1,100 +1,126 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Radio, Button, Spin, message } from "antd";
 import banner from "../../../img/banner.png";
 import admin from "../../../img/admin.jpg";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { db } from "../../../firebaseConfig";
+import { getDocs, collection, query, where } from "firebase/firestore";
 import "./DLogin.css";
 
 const DLogin = () => {
   const [userType, setUserType] = useState("Hospital");
-  const [userID, setUserID] = useState("");
   const [hospitalID, setHospitalID] = useState("");
-  const [DepartmentID, setDepartmentID] = useState("");
+  const [deptID, setDeptID] = useState("");
   const [doctorID, setDoctorID] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [companyID, setCompanyID] = useState("");
+  const [cardNo, setCardNo] = useState("");
+  const [cvv, setCVV] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const login = async () => {
+    try {
+      const patientsCollection = collection(db, "patients");
+      const q = query(
+        patientsCollection,
+        where("card_no", "==", cardNo),
+        where("cvv", "==", cvv)
+      );
+      const patientQuery = await getDocs(q);
+
+      if (!patientQuery.empty) {
+        navigate("/patient");
+        message.success("Successfully Logged in");
+      } else {
+        message.error("Incorrect patient details. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during patient login: ", error);
+      message.error("Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loginDoctor = async () => {
+    try {
+      const doctorsCollection = collection(db, "doctors");
+      const q = query(
+        doctorsCollection,
+        where("hospital_id", "==", hospitalID),
+        where("department_id", "==", deptID),
+        where("doctor_id", "==", doctorID),
+        where("cvv", "==", cvv)
+      );
+      const doctorQuery = await getDocs(q);
+
+      if (!doctorQuery.empty) {
+        navigate("/hospital");
+        message.success("Successfully Logged in");
+      } else {
+        message.error("Incorrect doctor details. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during doctor login: ", error);
+      message.error("Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loginInsurance = async () => {
+    try {
+      const insuranceCollection = collection(db, "insurance_company");
+      const q = query(
+        insuranceCollection,
+        where("company_id", "==", companyID),
+        where("cvv", "==", cvv)
+      );
+      const insuranceQuery = await getDocs(q);
+
+      if (!insuranceQuery.empty) {
+        navigate("/insurance");
+        message.success("Successfully Logged in");
+      } else {
+        message.error("Incorrect insurance details. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during insurance login: ", error);
+      message.error("Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleUserTypeChange = (e) => {
     setUserType(e.target.value);
   };
 
-  const showhospitalfields = () => {
-    return (
-      <div>
-        <h3>Department ID</h3>
-        <input
-          type="text"
-          value={DepartmentID}
-          onChange={(e) => setDepartmentID(e.target.value)}
-          name="DepartmentID"
-          // required
-        />
-        <h3>Doctor ID</h3>
-        <input
-          type="text"
-          value={doctorID}
-          onChange={(e) => setDoctorID(e.target.value)}
-          name="doctorID"
-          // required
-        />
-      </div>
-    );
-  };
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
 
-  useEffect(() => {
-    if (userType === "Hospital") {
-      showhospitalfields();
+    try {
+      setLoading(true);
+
+      switch (userType) {
+        case "Hospital":
+          await loginDoctor();
+          break;
+        case "Patient":
+          await login();
+          break;
+        case "Insurance":
+          await loginInsurance();
+          break;
+        default:
+          throw new Error("Invalid userType");
+      }
+    } catch (error) {
+      console.error("Login error: ", error);
+      message.error("Login failed. Please check your credentials and try again.");
+    } finally {
+      setLoading(false);
     }
-  }, [userType]);
-
-  const handleLoginSubmit = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-    if (userType === "Hospital") {
-      console.log("Hospital login successful");
-      navigate("/hospital");
-    } else if (userType === "Patient") {
-      console.log("Patient login successful");
-      navigate("/patient");
-    } else {
-      console.log("Insurance login successful");
-      navigate("/insurance");
-    }
-    // try {
-    //   const userData = {
-    //     userType,
-    //     userID: userType === "Hospital" ? hospitalID : userID, // Fixed hospitalID
-    //     password,
-    //   };
-
-    //   const response = await axios.post(
-    //     "https://long-tan-crane-gear.cyclic.app/api/auth/login",
-    //     userData
-    //   );
-
-    //   if (response.data.success) {
-    //     if (userType === "Hospital") {
-    //       console.log("Hospital login successful");
-    //       navigate("/hospital");
-    //     } else if (userType === "Patient") {
-    //       console.log("Patient login successful");
-    //       navigate("/patient");
-    //     } else {
-    //       console.log("Insurance login successful");
-    //       navigate("/insurance");
-    //     }
-    //   } else {
-    //     console.log("Login failed");
-    //     message.error("Incorrect login or password. Please try again.");
-    //   }
-    // } catch (error) {
-    //   console.error("Login error:", error);
-    //   message.error("Incorrect login or password. Please try again.");
-    // } finally {
-    //   setLoading(false);
-    // }
   };
 
   return (
@@ -130,23 +156,61 @@ const DLogin = () => {
               {userType === "Hospital"
                 ? "Hospital ID"
                 : userType === "Patient"
-                  ? "Patient ID"
-                  : "Insurance ID"}
+                ? "Patient ID"
+                : "Insurance ID"}
             </h3>
             <input
               type="text"
-              value={userType === "Hospital" ? hospitalID : userID}
-              onChange={(e) => (userType === "Hospital" ? setHospitalID(e.target.value) : setUserID(e.target.value))}
-              name={userType === "Hospital" ? "hospitalID" : "userID"}
+              value={
+                userType === "Hospital"
+                  ? hospitalID
+                  : userType === "Patient"
+                  ? cardNo
+                  : companyID
+              }
+              onChange={(e) =>
+                userType === "Hospital"
+                  ? setHospitalID(e.target.value)
+                  : userType === "Patient"
+                  ? setCardNo(e.target.value)
+                  : setCompanyID(e.target.value)
+              }
+              name={
+                userType === "Hospital"
+                  ? "hospitalID"
+                  : userType === "Patient"
+                  ? "cardNo"
+                  : "companyID"
+              }
               required
             />
 
-            {userType === "Hospital" ? showhospitalfields() : null}
-            <h3>Password</h3>
+            {userType === "Hospital" && (
+              <div>
+                <h3>Department ID</h3>
+                <input
+                  type="text"
+                  value={deptID}
+                  onChange={(e) => setDeptID(e.target.value)}
+                  name="deptID"
+                  required
+                />
+                <h3>Doctor ID</h3>
+                <input
+                  type="text"
+                  value={doctorID}
+                  onChange={(e) => setDoctorID(e.target.value)}
+                  name="doctorID"
+                  required
+                />
+              </div>
+            )}
+
+            <h3>CVV</h3>
             <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              type="cvv"
+              value={cvv}
+              onChange={(e) => setCVV(e.target.value)}
               required
             />
             {loading ? (

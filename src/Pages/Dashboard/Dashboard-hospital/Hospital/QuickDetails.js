@@ -9,16 +9,18 @@ import { useNavigate } from "react-router-dom";
 
 export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
-  const [patientID, setPatientID] = React.useState("");
+  const [card_id, setcard_id] = React.useState("");
   const navigate = useNavigate(); 
 
   const handleClickOpen = () => {
     setOpen(true);
   };
+
   const handleSearch = () => {
-    navigate(`/quickpatientprofile/${patientID}`);
+    navigate(`/quickpatientprofile/${card_id}`);
     handleClose();
   };
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -36,10 +38,10 @@ export default function FormDialog() {
             margin="dense"
             id="ID"
             label="Patient ID"
-            type="number"
             fullWidth
             variant="standard"
-            onChange={(e) => setPatientID(e.target.value)}
+            value={card_id}
+            onChange={(e) => setcard_id(e.target.value)}
           />
         </DialogContent>
         <DialogActions>

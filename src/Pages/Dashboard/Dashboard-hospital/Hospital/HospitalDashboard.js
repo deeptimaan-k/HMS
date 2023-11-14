@@ -5,8 +5,6 @@ import { BsFillBookmarkCheckFill } from "react-icons/bs";
 import { RiAdminLine } from "react-icons/ri";
 import Nav from "../Navigation";
 import Quick from "./QuickDetails";
-import Search from "./SearchPatient";
-import DoctorList from "./DoctorList";
 
 import "../CommonCSS.css";
 const FrontPage = () => {
@@ -57,16 +55,6 @@ const FrontPage = () => {
             <Quick />
             </div>
           </div>
-          {/* <div className="one commondiv">
-            <div>
-            <Search />
-            </div>
-          </div> */}
-          {/* <div className="one commondiv">
-            <div>
-            <DoctorList />
-            </div>
-          </div> */}
         </div>
       </div>
     </div>
